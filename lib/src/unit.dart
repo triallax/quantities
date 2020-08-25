@@ -272,7 +272,9 @@ class Unit {
   int get hashCode {
     const equality = UnorderedIterableEquality<Tuple2<BaseUnit, UnitPrefix>>();
 
-    return runtimeType.hashCode ^ equality.hash(unitsUp) ^ equality.hash(unitsDown);
+    return runtimeType.hashCode ^
+        equality.hash(unitsUp) ^
+        equality.hash(unitsDown);
   }
 
   @override
