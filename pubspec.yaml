@@ -10,9 +10,9 @@ environment:
   sdk: '>=2.8.1 <3.0.0'
 
 dependencies:
-  collection: ^1.14.13
-  tuple: ^1.0.3
-  meta: ^1.2.2
+  collection: ^1.14.0
+  tuple: ^1.0.0
+  meta: ^1.0.0
 
 dev_dependencies:
   lint: ^1.2.0
