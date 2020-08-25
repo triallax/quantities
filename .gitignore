@@ -1,0 +1,15 @@
+# macOS
+.DS_Store
+
+# pub outputs
+.dart_tool/
+.packages
+
+# https://dart.dev/guides/libraries/private-files#pubspeclock
+/pubspec.lock
+
+# Build outputs
+build/
+
+# dartdoc output
+doc/api/
