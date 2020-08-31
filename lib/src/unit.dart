@@ -194,6 +194,33 @@ class Unit {
         [...unitsDown, ...that.unitsUp],
       );
 
+  String _intToSuperscript(int i) {
+    assert(i > 0);
+
+    const superscriptDigitMap = {
+      0: '⁰',
+      1: '¹',
+      2: '²',
+      3: '³',
+      4: '⁴',
+      5: '⁵',
+      6: '⁶',
+      7: '⁷',
+      8: '⁸',
+      9: '⁹',
+    };
+
+    final list = <String>[];
+
+    while (i > 0) {
+      list.insert(0, superscriptDigitMap[i % 10]);
+      // ignore: parameter_assignments
+      i = i ~/ 10;
+    }
+
+    return list.join();
+  }
+
   Iterable<String> _tupleListToStrings(
       List<Tuple2<BaseUnit, UnitPrefix>> list) sync* {
     final map = <Tuple2<BaseUnit, UnitPrefix>, int>{};
@@ -209,19 +236,12 @@ class Unit {
     for (final entry in map.entries) {
       final unitString = _unitTupleToString(entry.key);
 
-      switch (entry.value) {
-        case 1:
-          yield unitString;
-          break;
-
-        case 2:
-          yield '$unitString²';
-          break;
-
-        default:
-          throw RangeError(
-              'Cannot convert unit with power more than 2 to string');
+      if (entry.value == 1) {
+        yield unitString;
+        continue;
       }
+
+      yield '$unitString${_intToSuperscript(entry.value)}';
     }
   }
 
