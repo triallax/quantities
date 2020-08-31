@@ -87,7 +87,18 @@ void main() {
       expect(kilo.gram.toString(), 'kg');
       expect(centi.meter.toString(), 'cm');
 
-      expect((centi.meter * centi.meter).toString(), 'cm²');
+      var unit = Unit.identity;
+
+      expect((unit = unit * centi.meter).toString(), 'cm');
+      expect((unit = unit * centi.meter).toString(), 'cm²');
+      expect((unit = unit * centi.meter).toString(), 'cm³');
+      expect((unit = unit * centi.meter).toString(), 'cm⁴');
+      expect((unit = unit * centi.meter).toString(), 'cm⁵');
+      expect((unit = unit * centi.meter).toString(), 'cm⁶');
+      expect((unit = unit * centi.meter).toString(), 'cm⁷');
+      expect((unit = unit * centi.meter).toString(), 'cm⁸');
+      expect((unit = unit * centi.meter).toString(), 'cm⁹');
+      expect((unit = unit * centi.meter).toString(), 'cm¹⁰');
 
       expect(month.toString(), 'mo');
       expect(year.reciprocal.toString(), '1 / yr');
