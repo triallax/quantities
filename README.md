@@ -4,7 +4,7 @@ Created from templates made available by Stagehand under a BSD-style [license](h
 
 ## API Status
 
-The API is highly experimental; large changes are planned. Do _NOT_ use this package in production code unless you understand and accept the consequences of this.
+The API is highly experimental; large changes are planned. Do **NOT** use this package in production code unless you understand and accept the consequences of this.
 
 ## Usage
 
