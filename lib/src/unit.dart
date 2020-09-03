@@ -59,7 +59,10 @@ class Unit {
     return Unit._(newUnitsUp, newUnitsDown);
   }
 
-  static const identity = Unit._([], []);
+  static const unity = Unit._([], []);
+
+  @Deprecated('Use `unity` instead')
+  static const identity = unity;
 
   static Tuple2<BaseUnit, UnitPrefix> _tryParseNonDerived(String string) {
     if (string == '1') {
@@ -112,7 +115,7 @@ class Unit {
 
     if (tuple != null) {
       if (tuple == const Tuple2(null, null)) {
-        return Unit.identity;
+        return unity;
       }
 
       return Unit._([tuple], const []);
@@ -253,7 +256,7 @@ class Unit {
 
   @override
   String toString() {
-    if (this == identity) {
+    if (this == unity) {
       return '1';
     }
 

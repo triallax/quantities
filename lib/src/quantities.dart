@@ -12,8 +12,8 @@ part 'base_unit.dart';
 part 'unit_prefix.dart';
 
 class Quantity implements Comparable<Quantity> {
-  factory Quantity(num value, [Unit unit = Unit.identity]) {
-    if (unit == Unit.identity) {
+  factory Quantity(num value, [Unit unit = Unit.unity]) {
+    if (unit == Unit.unity) {
       return Quantity._(value.toDouble(), unit);
     }
 
@@ -145,7 +145,7 @@ class Quantity implements Comparable<Quantity> {
       valueString = valueString.substring(0, valueString.length - 2);
     }
 
-    if (unit == Unit.identity) return valueString;
+    if (unit == Unit.unity) return valueString;
 
     return '$valueString $unit';
   }
@@ -155,5 +155,5 @@ class Quantity implements Comparable<Quantity> {
 }
 
 extension NumToQuantity on num {
-  Quantity call([Unit unit = Unit.identity]) => Quantity(this, unit);
+  Quantity call([Unit unit = Unit.unity]) => Quantity(this, unit);
 }
