@@ -47,7 +47,7 @@ void main() {
 
   group('Unit', () {
     test('parses units from strings correctly', () {
-      expect(Unit.tryParse('1'), Unit.identity);
+      expect(Unit.tryParse('1'), Unit.unity);
       expect(Unit.tryParse('g'), gram);
       expect(Unit.tryParse('wk'), week);
       expect(Unit.tryParse('kg'), kilo.gram);
@@ -77,7 +77,7 @@ void main() {
     });
 
     test('toString returns correct string', () {
-      expect(Unit.identity.toString(), '1');
+      expect(Unit.unity.toString(), '1');
 
       expect(second.toString(), 's');
       expect(gram.toString(), 'g');
@@ -87,7 +87,7 @@ void main() {
       expect(kilo.gram.toString(), 'kg');
       expect(centi.meter.toString(), 'cm');
 
-      var unit = Unit.identity;
+      var unit = Unit.unity;
 
       expect((unit = unit * centi.meter).toString(), 'cm');
       expect((unit = unit * centi.meter).toString(), 'cm²');
@@ -231,9 +231,9 @@ void main() {
     });
 
     test('== works correctly', () {
-      expect(Unit.identity, Unit.identity);
-      expect(Unit.identity, Unit.derived(const [], const []));
-      expect(Unit.identity, isNot(second.reciprocal));
+      expect(Unit.unity, Unit.unity);
+      expect(Unit.unity, Unit.derived(const [], const []));
+      expect(Unit.unity, isNot(second.reciprocal));
 
       expect(meter / second, meter / second);
       expect(meter / second, isNot(second / meter));
@@ -244,7 +244,7 @@ void main() {
     });
 
     test('hashCode works correctly', () {
-      expect(Unit.identity.hashCode, Unit.derived(const [], const []).hashCode);
+      expect(Unit.unity.hashCode, Unit.derived(const [], const []).hashCode);
       expect((meter / second).hashCode, (meter / second).hashCode);
       expect(kilo.gram.hashCode, kilo.gram.hashCode);
     });

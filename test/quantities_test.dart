@@ -102,7 +102,7 @@ void main() {
     test('call is same as default Quantity constructor', () {
       expect(5(meter / second), Quantity(5, meter / second));
       expect(3(meter), Quantity(3, meter));
-      expect(3(Unit.identity), Quantity(3));
+      expect(3(Unit.unity), Quantity(3));
       expect(4(), Quantity(4));
     });
   });
