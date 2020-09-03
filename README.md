@@ -21,4 +21,4 @@ void main() {
 
 ## Credits
 
-This package takes huge inspiration from [purescript-quantites](https://github.com/sharkdp/purescript-quantities), especially in its internal design. Kudos to @sharkdp!
+This package takes huge inspiration from [purescript-quantites](https://github.com/sharkdp/purescript-quantities), especially in its internal design. Kudos to [sharkdp](https://github.com/sharkdp)!
