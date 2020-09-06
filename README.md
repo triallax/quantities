@@ -1,6 +1,31 @@
-A Dart package that helps you work with physical quantities and units seamlessly. Download from [here](https://pub.dev/packages/quantities)
+A Dart package that helps you work with physical quantities and units seamlessly. 
 
 Created from templates made available by Stagehand under a BSD-style [license](https://github.com/dart-lang/stagehand/blob/master/LICENSE).
+## Installation
+---
+### 1. Add it to your Dependencies
+Add this to your pubspec.yaml file:
+```yml
+dependencies:
+  quantities: ^0.0.1
+```
+### 2. Install The Package
+Install from the Command Line:
+
+with pub:
+```
+$ pub get
+```
+with Flutter:
+```
+$ flutter pub get
+```
+Alternatively, your editor might support `pub get` or `flutter pub get`. Check the docs for your editor to learn more.
+### 3. Import The Package
+Now in your Dart code, you can use: 
+```dart
+import 'package:quantities/quantities.dart';
+```
 
 ## API Status
 
