@@ -2,6 +2,10 @@ A Dart package that helps you work with physical quantities and units seamlessly
 
 Created from templates made available by Stagehand under a BSD-style [license](https://github.com/dart-lang/stagehand/blob/master/LICENSE).
 
+## Installation
+
+See installation instructions [here](https://pub.dev/packages/quantities/install).
+
 ## API Status
 
 The API is highly experimental; large changes are planned. Do **NOT** use this package in production code unless you understand and accept the consequences of this.
