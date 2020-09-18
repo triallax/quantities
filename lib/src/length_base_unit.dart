@@ -8,5 +8,7 @@ class LengthBaseUnit extends BaseUnit {
 
   static const meter = LengthBaseUnit._(1, 'm');
 
-  static const values = [meter];
+  static const inch = LengthBaseUnit._(0.0254, 'in');
+
+  static const values = [meter, inch];
 }

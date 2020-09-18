@@ -8,5 +8,7 @@ class MassBaseUnit extends BaseUnit {
 
   static const gram = MassBaseUnit._(1, 'g');
 
-  static const values = [gram];
+  static const pound = MassBaseUnit._(453.59237, 'lb');
+
+  static const values = [gram, pound];
 }

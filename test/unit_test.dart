@@ -52,6 +52,8 @@ void main() {
       expect(Unit.tryParse('wk'), week);
       expect(Unit.tryParse('kg'), kilo.gram);
       expect(Unit.tryParse('cm'), centi.meter);
+      expect(Unit.tryParse('in'), inch);
+      expect(Unit.tryParse('lb'), pound);
       expect(Unit.tryParse('kg/m/m'), kilo.gram / (meter * meter));
       expect(Unit.tryParse('foo'), null);
     });
@@ -104,6 +106,7 @@ void main() {
       expect(year.reciprocal.toString(), '1 / yr');
 
       expect((kilo.meter / day).toString(), 'km / d');
+      expect((inch * pound).toString(), 'in · lb');
       expect((kilo.meter / second / second).toString(), 'km / s²');
       expect((kilo.gram * meter / second / second).toString(), 'kg · m / s²');
     });
@@ -252,7 +255,9 @@ void main() {
 
   test('global unit consts have correct values', () {
     expect(meter, Unit.nonDerived(LengthBaseUnit.meter));
+    expect(inch, Unit.nonDerived(LengthBaseUnit.inch));
     expect(gram, Unit.nonDerived(MassBaseUnit.gram));
+    expect(pound, Unit.nonDerived(MassBaseUnit.pound));
     expect(second, Unit.nonDerived(TimeBaseUnit.second));
     expect(day, Unit.nonDerived(TimeBaseUnit.day));
     expect(month, Unit.nonDerived(TimeBaseUnit.month));

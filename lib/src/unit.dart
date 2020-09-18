@@ -6,9 +6,13 @@ const centi = UnitPrefix.centi;
 
 final Unit meter = Unit.nonDerived(LengthBaseUnit.meter);
 
+final Unit inch = Unit.nonDerived(LengthBaseUnit.inch);
+
 final Unit squareMeter = meter * meter;
 
 final Unit gram = Unit.nonDerived(MassBaseUnit.gram);
+
+final Unit pound = Unit.nonDerived(MassBaseUnit.pound);
 
 final Unit second = Unit.nonDerived(TimeBaseUnit.second);
 

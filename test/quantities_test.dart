@@ -26,12 +26,14 @@ void main() {
           Quantity(10, kilo.gram * meter / second).toString(), '10 kg · m / s');
 
       expect(3().toString(), '3');
+      expect(6.6(pound).toString(), '6.6 lb');
     });
 
     test('== works correctly', () {
       expect(90(centi.meter), isNot(0.9(meter)));
       expect(Quantity(1), Quantity(1));
       expect(Quantity(50, kilo.meter), 50(kilo.meter));
+      expect(10(inch), 10(inch));
 
       expect(Quantity(30, day), isNot(Quantity(25, day)));
       expect(Quantity(50, meter), isNot(Quantity(30, gram)));
@@ -58,6 +60,7 @@ void main() {
       expect(500(second) + 3(day), 259700(second));
       expectQuantity(5(meter / second) + 1000(kilo.meter / day),
           16.5741(meter / second), tolerance);
+      expect((5(inch) + -6(meter)).to(inch), closeTo(-231.22, 0.001));
     });
 
     test('multiplication works correctly', () {
@@ -83,6 +86,7 @@ void main() {
 
     test('converts between units correctly', () {
       expect(90(centi.meter).to(meter), 0.9);
+      expect(5.3(pound).to(kilo.gram), closeTo(2.40404, 0.000001));
       expect(3(week).to(day), 21);
       expect(1(meter).to(centi.meter), 100);
       expect(500(centi.meter).to(meter), 5);
