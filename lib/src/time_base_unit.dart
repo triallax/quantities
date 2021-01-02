@@ -10,9 +10,9 @@ class TimeBaseUnit extends BaseUnit {
 
   static const _secondsPerHour = 60.0 * 60;
 
-  static const _secondsPerDay = _secondsPerHour * 24;
-
   static const hour = TimeBaseUnit._(_secondsPerHour, 'hr');
+
+  static const _secondsPerDay = _secondsPerHour * 24;
 
   static const day = TimeBaseUnit._(_secondsPerDay, 'd');
 
