@@ -13,3 +13,6 @@ build/
 
 # dartdoc output
 doc/api/
+
+# IntelliJ IDEA
+.idea/
