@@ -68,8 +68,8 @@ class Quantity implements Comparable<Quantity> {
     if (unit == newUnit) {
       return value;
     }
-    int compareTuples(Tuple2<BaseUnit, UnitPrefix> tuple1,
-            Tuple2<BaseUnit, UnitPrefix> tuple2) =>
+    int compareTuples(Tuple2<BaseUnit, UnitPrefix?> tuple1,
+            Tuple2<BaseUnit, UnitPrefix?> tuple2) =>
         tuple1.item1.id.compareTo(tuple2.item1.id);
 
     final oldSortedUnitsUp = unit.unitsUp.toList()..sort(compareTuples);
@@ -82,12 +82,12 @@ class Quantity implements Comparable<Quantity> {
 
     oldSortedUnitsUp.asMap().forEach((index, tuple) {
       if (tuple.item2 != null) {
-        thisMultiple *= tuple.item2.value;
+        thisMultiple *= tuple.item2!.value;
       }
 
       final newTuple = newSortedUnitsUp[index];
       if (newTuple.item2 != null) {
-        thatMultiple *= newTuple.item2.value;
+        thatMultiple *= newTuple.item2!.value;
       }
 
       if (newTuple.item1 != tuple.item1) {
@@ -98,12 +98,12 @@ class Quantity implements Comparable<Quantity> {
 
     oldSortedUnitsDown.asMap().forEach((index, tuple) {
       if (tuple.item2 != null) {
-        thisMultiple /= tuple.item2.value;
+        thisMultiple /= tuple.item2!.value;
       }
 
       final newTuple = newSortedUnitsDown[index];
       if (newTuple.item2 != null) {
-        thatMultiple /= newTuple.item2.value;
+        thatMultiple /= newTuple.item2!.value;
       }
 
       if (newTuple.item1 != tuple.item1) {

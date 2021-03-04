@@ -10,7 +10,7 @@ abstract class BaseUnit {
   final int id;
 
   @factory
-  static BaseUnit tryParse(String string) {
+  static BaseUnit? tryParse(String string) {
     for (final value in _values) {
       if (string == value.symbol) {
         return value;
