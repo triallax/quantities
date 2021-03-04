@@ -25,32 +25,32 @@ final Unit month = Unit.nonDerived(TimeBaseUnit.month);
 final Unit year = Unit.nonDerived(TimeBaseUnit.year);
 
 class _SameQuantityTupleEquality
-    implements Equality<Tuple2<BaseUnit, UnitPrefix>> {
+    implements Equality<Tuple2<BaseUnit, UnitPrefix?>> {
   const _SameQuantityTupleEquality();
 
   @override
-  bool equals(Tuple2<BaseUnit, UnitPrefix> unit1,
-          Tuple2<BaseUnit, UnitPrefix> unit2) =>
+  bool equals(Tuple2<BaseUnit, UnitPrefix?> unit1,
+          Tuple2<BaseUnit, UnitPrefix?> unit2) =>
       unit1.item1.hasSameQuantity(unit2.item1);
 
   @override
-  int hash(Tuple2<BaseUnit, UnitPrefix> unit) => unit.item1.id;
+  int hash(Tuple2<BaseUnit, UnitPrefix?> unit) => unit.item1.id;
 
   @override
-  bool isValidKey(Object obj) => obj is Tuple2<BaseUnit, UnitPrefix>;
+  bool isValidKey(Object? obj) => obj is Tuple2<BaseUnit, UnitPrefix?>;
 }
 
 class Unit {
   const Unit._(this.unitsUp, this.unitsDown);
 
   @visibleForTesting
-  Unit.nonDerived(BaseUnit baseUnit, [UnitPrefix prefix])
+  Unit.nonDerived(BaseUnit baseUnit, [UnitPrefix? prefix])
       : unitsUp = [Tuple2(baseUnit, prefix)],
         unitsDown = const [];
 
   @visibleForTesting
-  factory Unit.derived(List<Tuple2<BaseUnit, UnitPrefix>> unitsUp,
-      List<Tuple2<BaseUnit, UnitPrefix>> unitsDown) {
+  factory Unit.derived(List<Tuple2<BaseUnit, UnitPrefix?>> unitsUp,
+      List<Tuple2<BaseUnit, UnitPrefix?>> unitsDown) {
     final newUnitsUp = unitsUp.toList();
     final newUnitsDown = unitsDown.toList();
 
@@ -68,16 +68,20 @@ class Unit {
   @Deprecated('Use `unity` instead')
   static const identity = unity;
 
-  static Tuple2<BaseUnit, UnitPrefix> _tryParseNonDerived(String string) {
+  /// Parses [string] to a unit and adds it to [list] if necessary.
+  ///
+  /// Returns `false` if parsing failed.
+  static bool _parseAndAddTupleToList(
+      List<Tuple2<BaseUnit, UnitPrefix?>> list, String string) {
     if (string == '1') {
-      return const Tuple2(null, null);
+      return true;
     }
 
     if (!RegExp(r'^[a-z]+$').hasMatch(string)) {
-      return null;
+      return false;
     }
 
-    UnitPrefix prefix;
+    UnitPrefix? prefix;
     var baseUnitString = string;
 
     switch (baseUnitString[0]) {
@@ -93,10 +97,11 @@ class Unit {
 
     final baseUnit = BaseUnit.tryParse(baseUnitString);
     if (baseUnit != null) {
-      return Tuple2(baseUnit, prefix);
+      list.add(Tuple2(baseUnit, prefix));
+      return true;
     }
 
-    return null;
+    return false;
   }
 
   /// Convert [string] to a unit, returning null in case the string couldn't
@@ -114,42 +119,34 @@ class Unit {
   ///   can repeat the units instead.
   @factory
   // ignore: prefer_constructors_over_static_methods
-  static Unit tryParse(String string) {
-    final tuple = _tryParseNonDerived(string);
-
-    if (tuple != null) {
-      if (tuple == const Tuple2(null, null)) {
-        return unity;
-      }
-
-      return Unit._([tuple], const []);
-    }
-
-    final unitsUp = <Tuple2<BaseUnit, UnitPrefix>>[];
-    final unitsDown = <Tuple2<BaseUnit, UnitPrefix>>[];
+  static Unit? tryParse(String string) {
+    final unitsUp = <Tuple2<BaseUnit, UnitPrefix?>>[];
+    final unitsDown = <Tuple2<BaseUnit, UnitPrefix?>>[];
 
     final list = string.split(RegExp('(?=[*/])'));
 
-    final firstTuple = _tryParseNonDerived(list[0]);
-
-    if (firstTuple == null) {
+    if (!_parseAndAddTupleToList(unitsUp, list[0])) {
       return null;
     }
 
-    unitsUp.add(firstTuple);
-
     for (final string in list.skip(1)) {
+      List<Tuple2<BaseUnit, UnitPrefix?>> list;
+
       switch (string[0]) {
         case '/':
-          unitsDown.add(_tryParseNonDerived(string.substring(1)));
+          list = unitsDown;
           break;
 
         case '*':
-          unitsUp.add(_tryParseNonDerived(string.substring(1)));
+          list = unitsUp;
           break;
 
         default:
           return null;
+      }
+
+      if (!_parseAndAddTupleToList(list, string.substring(1))) {
+        return null;
       }
     }
 
@@ -167,9 +164,8 @@ class Unit {
         continue;
       }
 
-      final downTuple = newUnitsDown.firstWhere(
+      final downTuple = newUnitsDown.firstWhereOrNull(
         (elem) => upTuple.item1.hasSameQuantity(elem.item1),
-        orElse: () => null,
       );
 
       if (downTuple != null) {
@@ -184,10 +180,10 @@ class Unit {
   }
 
   @visibleForTesting
-  final List<Tuple2<BaseUnit, UnitPrefix>> unitsUp;
+  final List<Tuple2<BaseUnit, UnitPrefix?>> unitsUp;
 
   @visibleForTesting
-  final List<Tuple2<BaseUnit, UnitPrefix>> unitsDown;
+  final List<Tuple2<BaseUnit, UnitPrefix?>> unitsDown;
 
   Unit get reciprocal => Unit._(unitsDown, unitsUp);
 
@@ -220,7 +216,7 @@ class Unit {
     final list = <String>[];
 
     while (i > 0) {
-      list.insert(0, superscriptDigitMap[i % 10]);
+      list.insert(0, superscriptDigitMap[i % 10]!);
       // ignore: parameter_assignments
       i = i ~/ 10;
     }
@@ -229,12 +225,12 @@ class Unit {
   }
 
   Iterable<String> _tupleListToStrings(
-      List<Tuple2<BaseUnit, UnitPrefix>> list) sync* {
-    final map = <Tuple2<BaseUnit, UnitPrefix>, int>{};
+      List<Tuple2<BaseUnit, UnitPrefix?>> list) sync* {
+    final map = <Tuple2<BaseUnit, UnitPrefix?>, int>{};
 
     for (final tuple in list) {
       if (map.containsKey(tuple)) {
-        map[tuple]++;
+        map[tuple] = map[tuple]! + 1;
       } else {
         map[tuple] = 1;
       }
@@ -252,7 +248,7 @@ class Unit {
     }
   }
 
-  String _unitTupleToString(Tuple2<BaseUnit, UnitPrefix> tuple) {
+  String _unitTupleToString(Tuple2<BaseUnit, UnitPrefix?> tuple) {
     if (tuple.item2 == null) return tuple.item1.toString();
 
     return '${tuple.item2}${tuple.item1}';
@@ -297,7 +293,7 @@ class Unit {
 
   @override
   int get hashCode {
-    const equality = UnorderedIterableEquality<Tuple2<BaseUnit, UnitPrefix>>();
+    const equality = UnorderedIterableEquality<Tuple2<BaseUnit, UnitPrefix?>>();
 
     return runtimeType.hashCode ^
         equality.hash(unitsUp) ^
@@ -306,12 +302,24 @@ class Unit {
 
   @override
   bool operator ==(dynamic that) {
-    const equality = UnorderedIterableEquality<Tuple2<BaseUnit, UnitPrefix>>();
+    const equality = UnorderedIterableEquality<Tuple2<BaseUnit, UnitPrefix?>>();
 
     return identical(this, that) ||
         (that is Unit &&
             that.runtimeType == runtimeType &&
             equality.equals(that.unitsUp, unitsUp) &&
             equality.equals(that.unitsDown, unitsDown));
+  }
+}
+
+extension _IterableUtils<T> on Iterable<T> {
+  T? firstWhereOrNull(bool Function(T) f) {
+    for (final element in this) {
+      if (f(element)) {
+        return element;
+      }
+    }
+
+    return null;
   }
 }
