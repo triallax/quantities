@@ -48,6 +48,7 @@ void main() {
   group('Unit', () {
     test('parses units from strings correctly', () {
       expect(Unit.tryParse('1'), Unit.unity);
+      expect(Unit.tryParse('kg*m/s/s'), kilo.gram * meter / (second * second));
       expect(Unit.tryParse('g'), gram);
       expect(Unit.tryParse('wk'), week);
       expect(Unit.tryParse('kg'), kilo.gram);
@@ -56,6 +57,8 @@ void main() {
       expect(Unit.tryParse('lb'), pound);
       expect(Unit.tryParse('kg/m/m'), kilo.gram / (meter * meter));
       expect(Unit.tryParse('foo'), null);
+      expect(Unit.tryParse('*'), null);
+      expect(Unit.tryParse('kg*'), null);
     });
 
     test('constructs correct unit', () {

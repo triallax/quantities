@@ -95,6 +95,7 @@ void main() {
       expect(2(year).to(month), 24);
       expect(() => 1(meter).to(second), throwsArgumentError);
       expect(351(kilo.meter / day).to(meter / second), 4.0625);
+      expect(6(hour).to(day), 0.25);
       expect(
           (4(kilo.gram) * 55(meter) / (44(second) * 3(second)))
               .to(gram * kilo.meter / (day * day)),
