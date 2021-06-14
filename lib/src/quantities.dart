@@ -1,5 +1,4 @@
-import 'package:collection/collection.dart'
-    show UnorderedIterableEquality, Equality;
+import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
 import 'package:tuple/tuple.dart' show Tuple2;
 

@@ -311,15 +311,3 @@ class Unit {
             equality.equals(that.unitsDown, unitsDown));
   }
 }
-
-extension _IterableUtils<T> on Iterable<T> {
-  T? firstWhereOrNull(bool Function(T) f) {
-    for (final element in this) {
-      if (f(element)) {
-        return element;
-      }
-    }
-
-    return null;
-  }
-}
