@@ -71,9 +71,6 @@ class Unit {
 
   static const unity = Unit._([], []);
 
-  @Deprecated('Use `unity` instead')
-  static const identity = unity;
-
   /// Parses [string] to a unit and adds it to [list] if necessary.
   ///
   /// Returns `false` if parsing failed.
