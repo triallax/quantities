@@ -16,6 +16,8 @@ final Unit pound = Unit.nonDerived(MassBaseUnit.pound);
 
 final Unit second = Unit.nonDerived(TimeBaseUnit.second);
 
+final Unit hour = Unit.nonDerived(TimeBaseUnit.hour);
+
 final Unit day = Unit.nonDerived(TimeBaseUnit.day);
 
 final Unit week = Unit.nonDerived(TimeBaseUnit.week);
