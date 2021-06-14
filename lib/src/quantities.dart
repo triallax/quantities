@@ -1,15 +1,11 @@
-import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
 import 'package:tuple/tuple.dart' show Tuple2;
 
-import 'length_base_unit.dart';
-import 'mass_base_unit.dart';
-import 'time_base_unit.dart';
+import 'base_unit.dart';
+import 'unit.dart';
+import 'unit_prefix.dart';
 
-part 'unit.dart';
-part 'base_unit.dart';
-part 'unit_prefix.dart';
-
+@immutable
 class Quantity implements Comparable<Quantity> {
   factory Quantity(num value, [Unit unit = Unit.unity]) {
     if (unit == Unit.unity) {

@@ -1,26 +1,34 @@
-part of 'quantities.dart';
+import 'package:collection/collection.dart';
+import 'package:meta/meta.dart';
+import 'package:tuple/tuple.dart';
 
-final Unit meter = Unit.nonDerived(LengthBaseUnit.meter);
+import 'base_unit.dart';
+import 'length_base_unit.dart';
+import 'mass_base_unit.dart';
+import 'time_base_unit.dart';
+import 'unit_prefix.dart';
 
-final Unit inch = Unit.nonDerived(LengthBaseUnit.inch);
+final meter = Unit.nonDerived(LengthBaseUnit.meter);
 
-final Unit squareMeter = meter * meter;
+final inch = Unit.nonDerived(LengthBaseUnit.inch);
 
-final Unit gram = Unit.nonDerived(MassBaseUnit.gram);
+final squareMeter = meter * meter;
 
-final Unit pound = Unit.nonDerived(MassBaseUnit.pound);
+final gram = Unit.nonDerived(MassBaseUnit.gram);
 
-final Unit second = Unit.nonDerived(TimeBaseUnit.second);
+final pound = Unit.nonDerived(MassBaseUnit.pound);
 
-final Unit hour = Unit.nonDerived(TimeBaseUnit.hour);
+final second = Unit.nonDerived(TimeBaseUnit.second);
 
-final Unit day = Unit.nonDerived(TimeBaseUnit.day);
+final hour = Unit.nonDerived(TimeBaseUnit.hour);
 
-final Unit week = Unit.nonDerived(TimeBaseUnit.week);
+final day = Unit.nonDerived(TimeBaseUnit.day);
 
-final Unit month = Unit.nonDerived(TimeBaseUnit.month);
+final week = Unit.nonDerived(TimeBaseUnit.week);
 
-final Unit year = Unit.nonDerived(TimeBaseUnit.year);
+final month = Unit.nonDerived(TimeBaseUnit.month);
+
+final year = Unit.nonDerived(TimeBaseUnit.year);
 
 class _SameQuantityTupleEquality
     implements Equality<Tuple2<BaseUnit, UnitPrefix?>> {
@@ -41,12 +49,12 @@ class _SameQuantityTupleEquality
 class Unit {
   const Unit._(this.unitsUp, this.unitsDown);
 
-  @visibleForTesting
+  @internal
   Unit.nonDerived(BaseUnit baseUnit, [UnitPrefix? prefix])
       : unitsUp = [Tuple2(baseUnit, prefix)],
         unitsDown = const [];
 
-  @visibleForTesting
+  @internal
   factory Unit.derived(List<Tuple2<BaseUnit, UnitPrefix?>> unitsUp,
       List<Tuple2<BaseUnit, UnitPrefix?>> unitsDown) {
     final newUnitsUp = unitsUp.toList();
@@ -89,7 +97,7 @@ class Unit {
     final firstBaseUnitChar = string[0];
 
     final unitPrefixMatch = UnitPrefix.values
-        .firstWhereOrNull((prefix) => prefix._symbol == firstBaseUnitChar);
+        .firstWhereOrNull((prefix) => prefix.symbol == firstBaseUnitChar);
 
     final UnitPrefix? prefix;
     final String baseUnitString;
@@ -160,6 +168,7 @@ class Unit {
     return Unit.derived(unitsUp, unitsDown);
   }
 
+  @internal
   Tuple2<Unit, double> simplify() {
     final newUnitsUp = unitsUp.toList();
     final newUnitsDown = unitsDown.toList();
@@ -186,10 +195,10 @@ class Unit {
     return Tuple2(Unit._(newUnitsUp, newUnitsDown), valueMultiple);
   }
 
-  @visibleForTesting
+  @internal
   final List<Tuple2<BaseUnit, UnitPrefix?>> unitsUp;
 
-  @visibleForTesting
+  @internal
   final List<Tuple2<BaseUnit, UnitPrefix?>> unitsDown;
 
   Unit get reciprocal => Unit._(unitsDown, unitsUp);

@@ -1,4 +1,8 @@
-part of 'quantities.dart';
+import 'package:meta/meta.dart';
+
+import 'length_base_unit.dart';
+import 'mass_base_unit.dart';
+import 'unit.dart';
 
 const kilo = UnitPrefix._(1000, 'k');
 
@@ -11,11 +15,12 @@ const milli = UnitPrefix._(1 / 1000, 'm');
 const micro = UnitPrefix._(1 / 1000000, 'μ');
 
 class UnitPrefix {
-  const UnitPrefix._(this.value, this._symbol);
+  const UnitPrefix._(this.value, this.symbol);
 
   final double value;
 
-  final String _symbol;
+  @internal
+  final String symbol;
 
   Unit get meter => Unit.nonDerived(LengthBaseUnit.meter, this);
 
@@ -24,5 +29,5 @@ class UnitPrefix {
   static const values = [kilo, deci, centi, milli, micro];
 
   @override
-  String toString() => _symbol;
+  String toString() => symbol;
 }

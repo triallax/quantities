@@ -1,5 +1,11 @@
-part of 'quantities.dart';
+import 'package:meta/meta.dart';
 
+import 'length_base_unit.dart';
+import 'mass_base_unit.dart';
+import 'time_base_unit.dart';
+
+@internal
+@immutable
 abstract class BaseUnit {
   const BaseUnit(this.value, this.id, this.symbol);
 
@@ -26,6 +32,7 @@ abstract class BaseUnit {
     ...TimeBaseUnit.values
   ];
 
+  @nonVirtual
   bool hasSameQuantity(BaseUnit that) => id == that.id;
 
   @override

@@ -1,5 +1,8 @@
-import 'quantities.dart';
+import 'package:meta/meta.dart';
 
+import 'base_unit.dart';
+
+@internal
 class TimeBaseUnit extends BaseUnit {
   const TimeBaseUnit._(
     double value,

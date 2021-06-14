@@ -1,5 +1,6 @@
-import 'package:test/test.dart';
 import 'package:quantities/quantities.dart';
+import 'package:quantities/src/base_unit.dart' show BaseUnit;
+import 'package:test/test.dart';
 import 'package:tuple/tuple.dart';
 
 void checkNonDerivedUnit(

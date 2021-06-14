@@ -1,5 +1,8 @@
-import 'quantities.dart';
+import 'package:meta/meta.dart';
 
+import 'base_unit.dart';
+
+@internal
 class MassBaseUnit extends BaseUnit {
   const MassBaseUnit._(
     double value,
