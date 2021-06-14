@@ -7,13 +7,13 @@ import 'unit_prefix.dart';
 
 @immutable
 class Quantity implements Comparable<Quantity> {
-  factory Quantity(num value, [Unit unit = Unit.unity]) {
+  factory Quantity(double value, [Unit unit = Unit.unity]) {
     if (unit == Unit.unity) {
-      return Quantity._(value.toDouble(), unit);
+      return Quantity._(value, unit);
     }
 
     final tuple = unit.simplify();
-    return Quantity._(value.toDouble() * tuple.item2, tuple.item1);
+    return Quantity._(value * tuple.item2, tuple.item1);
   }
 
   const Quantity._(this.value, this.unit);
@@ -150,5 +150,5 @@ class Quantity implements Comparable<Quantity> {
 }
 
 extension NumToQuantity on num {
-  Quantity call([Unit unit = Unit.unity]) => Quantity(this, unit);
+  Quantity call([Unit unit = Unit.unity]) => Quantity(toDouble(), unit);
 }
