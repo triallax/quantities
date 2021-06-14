@@ -4,10 +4,7 @@ import 'base_unit.dart';
 
 @internal
 class TimeBaseUnit extends BaseUnit {
-  const TimeBaseUnit._(
-    double value,
-    String symbol,
-  ) : super(value, 0, symbol);
+  const TimeBaseUnit._(double value, String symbol) : super(value, 0, symbol);
 
   static const second = TimeBaseUnit._(1, 's');
 

@@ -145,7 +145,7 @@ class Unit {
     }
 
     for (final string in list.skip(1)) {
-      List<Tuple2<BaseUnit, UnitPrefix?>> list;
+      final List<Tuple2<BaseUnit, UnitPrefix?>> list;
 
       switch (string[0]) {
         case '/':

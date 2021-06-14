@@ -54,15 +54,11 @@ class Quantity implements Comparable<Quantity> {
       throw ArgumentError("Can't convert $this to $newUnit");
     }
 
-    if (value.isNaN ||
-        value == double.negativeInfinity ||
-        value == double.infinity) {
+    // Read `isFinite`'s docs.
+    if (unit == newUnit || !value.isFinite) {
       return value;
     }
 
-    if (unit == newUnit) {
-      return value;
-    }
     int compareTuples(Tuple2<BaseUnit, UnitPrefix?> tuple1,
             Tuple2<BaseUnit, UnitPrefix?> tuple2) =>
         tuple1.item1.id.compareTo(tuple2.item1.id);
