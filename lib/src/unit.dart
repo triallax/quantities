@@ -1,9 +1,5 @@
 part of 'quantities.dart';
 
-const kilo = UnitPrefix.kilo;
-
-const centi = UnitPrefix.centi;
-
 final Unit meter = Unit.nonDerived(LengthBaseUnit.meter);
 
 final Unit inch = Unit.nonDerived(LengthBaseUnit.inch);
@@ -79,22 +75,31 @@ class Unit {
       return true;
     }
 
-    if (!RegExp(r'^[a-z]+$').hasMatch(string)) {
+    if (string.isEmpty) {
       return false;
     }
 
-    UnitPrefix? prefix;
-    var baseUnitString = string;
+    final initialBaseUnit = BaseUnit.tryParse(string);
 
-    switch (baseUnitString[0]) {
-      case 'k':
-        prefix = kilo;
-        baseUnitString = baseUnitString.substring(1);
-        break;
+    if (initialBaseUnit != null) {
+      list.add(Tuple2(initialBaseUnit, null));
+      return true;
+    }
 
-      case 'c':
-        prefix = centi;
-        baseUnitString = baseUnitString.substring(1);
+    final firstBaseUnitChar = string[0];
+
+    final unitPrefixMatch = UnitPrefix.values
+        .firstWhereOrNull((prefix) => prefix._symbol == firstBaseUnitChar);
+
+    final UnitPrefix? prefix;
+    final String baseUnitString;
+
+    if (unitPrefixMatch != null) {
+      baseUnitString = string.substring(1);
+      prefix = unitPrefixMatch;
+    } else {
+      baseUnitString = string;
+      prefix = null;
     }
 
     final baseUnit = BaseUnit.tryParse(baseUnitString);

@@ -1,8 +1,8 @@
-import 'package:test/test.dart';
-import 'package:quantities/src/mass_base_unit.dart';
-import 'package:quantities/src/length_base_unit.dart';
-import 'package:quantities/src/time_base_unit.dart';
 import 'package:quantities/quantities.dart';
+import 'package:quantities/src/length_base_unit.dart';
+import 'package:quantities/src/mass_base_unit.dart';
+import 'package:quantities/src/time_base_unit.dart';
+import 'package:test/test.dart';
 import 'package:tuple/tuple.dart';
 
 import 'utils.dart';
@@ -10,13 +10,9 @@ import 'utils.dart';
 void main() {
   group('UnitPrefix', () {
     test('== is reflexive', () {
-      expect(UnitPrefix.kilo, UnitPrefix.kilo);
-      expect(UnitPrefix.centi, UnitPrefix.centi);
-    });
-
-    test('toString returns correct string', () {
-      expect(kilo.toString(), 'k');
-      expect(centi.toString(), 'c');
+      for (final prefix in UnitPrefix.values) {
+        expect(prefix, prefix);
+      }
     });
 
     test('gram returns correct unit', () {
@@ -36,11 +32,6 @@ void main() {
     });
   });
 
-  test('global prefix consts are equal to consts in UnitPrefix', () {
-    expect(kilo, UnitPrefix.kilo);
-    expect(centi, UnitPrefix.centi);
-  });
-
   test('squareMeter is the same as meter * meter', () {
     expect(squareMeter, meter * meter);
   });
@@ -56,9 +47,20 @@ void main() {
       expect(Unit.tryParse('in'), inch);
       expect(Unit.tryParse('lb'), pound);
       expect(Unit.tryParse('kg/m/m'), kilo.gram / (meter * meter));
+      expect(Unit.tryParse('vg'), null);
       expect(Unit.tryParse('foo'), null);
       expect(Unit.tryParse('*'), null);
       expect(Unit.tryParse('kg*'), null);
+      expect(Unit.tryParse('*/1'), null);
+
+      for (final unitPrefix in UnitPrefix.values) {
+        expect(Unit.tryParse('${unitPrefix}g'),
+            Unit.nonDerived(MassBaseUnit.gram, unitPrefix));
+        expect(
+          Unit.tryParse('${unitPrefix}m/hr'),
+          Unit.nonDerived(LengthBaseUnit.meter, unitPrefix) / hour,
+        );
+      }
     });
 
     test('constructs correct unit', () {
