@@ -9,12 +9,6 @@ import 'utils.dart';
 
 void main() {
   group('UnitPrefix', () {
-    test('== is reflexive', () {
-      for (final prefix in UnitPrefix.values) {
-        expect(prefix, prefix);
-      }
-    });
-
     test('gram returns correct unit', () {
       checkNonDerivedUnit(
         kilo.gram,
@@ -30,10 +24,6 @@ void main() {
         baseUnit: LengthBaseUnit.meter,
       );
     });
-  });
-
-  test('squareMeter is the same as meter * meter', () {
-    expect(squareMeter, meter * meter);
   });
 
   group('Unit', () {
@@ -264,6 +254,7 @@ void main() {
     expect(gram, Unit.nonDerived(MassBaseUnit.gram));
     expect(pound, Unit.nonDerived(MassBaseUnit.pound));
     expect(second, Unit.nonDerived(TimeBaseUnit.second));
+    expect(hour, Unit.nonDerived(TimeBaseUnit.hour));
     expect(day, Unit.nonDerived(TimeBaseUnit.day));
     expect(month, Unit.nonDerived(TimeBaseUnit.month));
     expect(year, Unit.nonDerived(TimeBaseUnit.year));
