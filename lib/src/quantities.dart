@@ -1,6 +1,7 @@
 import 'package:meta/meta.dart';
 
 import 'unit.dart';
+import 'units.dart';
 
 @immutable
 class Quantity implements Comparable<Quantity> {

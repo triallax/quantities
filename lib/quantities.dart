@@ -1,7 +1,8 @@
 export 'src/quantities.dart' show Quantity, NumToQuantity;
-export 'src/unit.dart'
+export 'src/unit.dart' show Unit;
+export 'src/unit_prefix.dart' show UnitPrefix, kilo, deci, centi, milli, micro;
+export 'src/units.dart'
     show
-        Unit,
         meter,
         inch,
         squareMeter,
@@ -13,4 +14,3 @@ export 'src/unit.dart'
         week,
         month,
         year;
-export 'src/unit_prefix.dart' show UnitPrefix, kilo, deci, centi, milli, micro;

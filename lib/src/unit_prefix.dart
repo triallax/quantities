@@ -1,7 +1,7 @@
 import 'package:meta/meta.dart';
 
-import 'unit.dart' show Unit, NonDerivedUnit;
-import 'unit.dart' as u;
+import 'unit.dart';
+import 'units.dart' as u;
 
 const kilo = UnitPrefix._(1000, 'k');
 
