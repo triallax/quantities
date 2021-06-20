@@ -24,14 +24,14 @@ void main() {
   group('Unit', () {
     test('parses units from strings correctly', () {
       expect(Unit.tryParse('1'), Unit.unity);
-      expect(Unit.tryParse('kg*m/s/s'), kilo.gram * meter / (second * second));
+      expect(Unit.tryParse('kg*m/s/s'), kilo(gram) * meter / (second * second));
       expect(Unit.tryParse('g'), gram);
       expect(Unit.tryParse('wk'), week);
-      expect(Unit.tryParse('kg'), kilo.gram);
-      expect(Unit.tryParse('cm'), centi.meter);
+      expect(Unit.tryParse('kg'), kilo(gram));
+      expect(Unit.tryParse('cm'), centi(meter));
       expect(Unit.tryParse('in'), inch);
       expect(Unit.tryParse('lb'), pound);
-      expect(Unit.tryParse('kg/m/m'), kilo.gram / (meter * meter));
+      expect(Unit.tryParse('kg/m/m'), kilo(gram) / (meter * meter));
       expect(Unit.tryParse('vg'), null);
       expect(Unit.tryParse('foo'), null);
       expect(Unit.tryParse('*'), null);
@@ -58,34 +58,34 @@ void main() {
       expect(meter.toString(), 'm');
       expect(week.toString(), 'wk');
 
-      expect(kilo.gram.toString(), 'kg');
-      expect(centi.meter.toString(), 'cm');
+      expect(kilo(gram).toString(), 'kg');
+      expect(centi(meter).toString(), 'cm');
 
       var unit = Unit.unity;
 
-      expect((unit = unit * centi.meter).toString(), 'cm');
-      expect((unit = unit * centi.meter).toString(), 'cm²');
-      expect((unit = unit * centi.meter).toString(), 'cm³');
-      expect((unit = unit * centi.meter).toString(), 'cm⁴');
-      expect((unit = unit * centi.meter).toString(), 'cm⁵');
-      expect((unit = unit * centi.meter).toString(), 'cm⁶');
-      expect((unit = unit * centi.meter).toString(), 'cm⁷');
-      expect((unit = unit * centi.meter).toString(), 'cm⁸');
-      expect((unit = unit * centi.meter).toString(), 'cm⁹');
-      expect((unit = unit * centi.meter).toString(), 'cm¹⁰');
+      expect((unit = unit * centi(meter)).toString(), 'cm');
+      expect((unit = unit * centi(meter)).toString(), 'cm²');
+      expect((unit = unit * centi(meter)).toString(), 'cm³');
+      expect((unit = unit * centi(meter)).toString(), 'cm⁴');
+      expect((unit = unit * centi(meter)).toString(), 'cm⁵');
+      expect((unit = unit * centi(meter)).toString(), 'cm⁶');
+      expect((unit = unit * centi(meter)).toString(), 'cm⁷');
+      expect((unit = unit * centi(meter)).toString(), 'cm⁸');
+      expect((unit = unit * centi(meter)).toString(), 'cm⁹');
+      expect((unit = unit * centi(meter)).toString(), 'cm¹⁰');
 
       expect(month.toString(), 'mo');
       expect(year.reciprocal.toString(), '1 / yr');
 
-      expect((kilo.meter / day).toString(), 'km / d');
+      expect((kilo(meter) / day).toString(), 'km / d');
       expect((inch * pound).toString(), 'in · lb');
-      expect((kilo.meter / second / second).toString(), 'km / s²');
-      expect((kilo.gram * meter / second / second).toString(), 'kg · m / s²');
+      expect((kilo(meter) / second / second).toString(), 'km / s²');
+      expect((kilo(gram) * meter / second / second).toString(), 'kg · m / s²');
     });
 
     test('multiplies two non derived units correctly', () {
       checkDerivedUnit(
-        kilo.gram * meter,
+        kilo(gram) * meter,
         unitsUp: [gram.baseUnit.withPrefix(kilo), meter.baseUnit],
         unitsDown: const [],
       );
@@ -93,7 +93,7 @@ void main() {
 
     test('multiplies a derived unit and non derived unit correctly', () {
       checkDerivedUnit(
-        (kilo.meter / day) * second,
+        (kilo(meter) / day) * second,
         unitsUp: [
           meter.baseUnit.withPrefix(kilo),
           second.baseUnit,
@@ -104,7 +104,7 @@ void main() {
 
     test('multiplies a non derived unit and derived unit correctly', () {
       checkDerivedUnit(
-        kilo.meter * (kilo.gram / meter),
+        kilo(meter) * (kilo(gram) / meter),
         unitsUp: [
           meter.baseUnit.withPrefix(kilo),
           gram.baseUnit.withPrefix(kilo),
@@ -117,7 +117,7 @@ void main() {
 
     test('multiplies derived units correctly', () {
       checkDerivedUnit(
-        (kilo.meter / second) * (kilo.gram * meter),
+        (kilo(meter) / second) * (kilo(gram) * meter),
         unitsUp: [
           meter.baseUnit.withPrefix(kilo),
           gram.baseUnit.withPrefix(kilo),
@@ -137,7 +137,7 @@ void main() {
 
     test('divides a derived unit and a non derived unit correctly', () {
       checkDerivedUnit(
-        (kilo.meter / second) / meter,
+        (kilo(meter) / second) / meter,
         unitsUp: [meter.baseUnit.withPrefix(kilo)],
         unitsDown: [
           second.baseUnit,
@@ -148,7 +148,7 @@ void main() {
 
     test('divides a non derived unit and derived unit correctly', () {
       checkDerivedUnit(
-        kilo.gram / (meter * meter),
+        kilo(gram) / (meter * meter),
         unitsUp: [gram.baseUnit.withPrefix(kilo)],
         unitsDown: [
           meter.baseUnit,
@@ -159,7 +159,7 @@ void main() {
 
     test('divides derived units correctly', () {
       checkDerivedUnit(
-        (kilo.gram * meter) / (second / gram),
+        (kilo(gram) * meter) / (second / gram),
         unitsUp: [
           gram.baseUnit.withPrefix(kilo),
           meter.baseUnit,
@@ -177,7 +177,7 @@ void main() {
       );
 
       checkDerivedUnit(
-        (kilo.meter / day).reciprocal,
+        (kilo(meter) / day).reciprocal,
         unitsUp: [day.baseUnit],
         unitsDown: [meter.baseUnit.withPrefix(kilo)],
       );
@@ -186,7 +186,7 @@ void main() {
     test('constructs unit without duplicate tuple in unitsUp and unitsDown',
         () {
       checkNonDerivedUnit(
-        kilo.meter * second / second,
+        kilo(meter) * second / second,
         meter.baseUnit.withPrefix(kilo),
       );
     });
@@ -209,13 +209,13 @@ void main() {
 
       expect(meter, isNot(second));
 
-      expect(kilo.gram * meter / second, isNot(kilo.gram * meter));
+      expect(kilo(gram) * meter / second, isNot(kilo(gram) * meter));
     });
 
     test('hashCode works correctly', () {
       expect(Unit.unity.hashCode, (second / second).hashCode);
       expect((meter / second).hashCode, (meter / second).hashCode);
-      expect(kilo.gram.hashCode, kilo.gram.hashCode);
+      expect(kilo(gram).hashCode, kilo(gram).hashCode);
     });
   });
 }

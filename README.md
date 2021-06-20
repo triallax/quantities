@@ -16,8 +16,8 @@ The API is highly experimental; large changes are planned. Do **NOT** use this p
 import 'package:quantities/quantities.dart';
 
 void main() {
-  final height = 165(centi.meter);
-  final weight = 53(kilo.gram);
+  final height = 165(centi(meter));
+  final weight = 53(kilo(gram));
   final bmi = weight / (height * height);
   print('${bmi.to(kilo.gram / squareMeter)} kg / m^2');
 }
