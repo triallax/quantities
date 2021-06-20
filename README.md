@@ -19,7 +19,7 @@ void main() {
   final height = 165(centi(meter));
   final weight = 53(kilo(gram));
   final bmi = weight / (height * height);
-  print('${bmi.to(kilo.gram / squareMeter)} kg / m^2');
+  print('${bmi.to(kilo(gram) / squareMeter)} kg / m^2');
 }
 ```
 
