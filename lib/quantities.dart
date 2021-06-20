@@ -1,4 +1,4 @@
-export 'src/quantities.dart' show Quantity, NumToQuantity;
+export 'src/quantity.dart' show Quantity, NumToQuantity;
 export 'src/unit.dart' show Unit;
 export 'src/unit_prefix.dart' show UnitPrefix, kilo, deci, centi, milli, micro;
 export 'src/units.dart'
