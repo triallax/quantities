@@ -3,66 +3,103 @@ import 'package:meta/meta.dart';
 import 'package:tuple/tuple.dart';
 
 import 'base_unit.dart';
-import 'length_base_unit.dart';
-import 'mass_base_unit.dart';
-import 'time_base_unit.dart';
+import 'prefixed_base_unit.dart';
 import 'unit_prefix.dart';
 
-final meter = Unit.nonDerived(LengthBaseUnit.meter);
+NonDerivedUnit _mkStandard(BaseStandardUnit baseUnit) =>
+    NonDerivedUnit(PrefixedBaseUnit(baseUnit));
 
-final inch = Unit.nonDerived(LengthBaseUnit.inch);
+NonDerivedUnit _mkNonStandard(
+  String symbol,
+  double factor,
+  List<BaseStandardUnit> unitsUp, [
+  List<BaseStandardUnit> unitsDown = const [],
+]) =>
+    NonDerivedUnit(
+        PrefixedBaseUnit(BaseUnit(symbol, factor, unitsUp, unitsDown)));
+
+final meter = _mkStandard(meterBaseUnit);
+
+final inch = _mkNonStandard('in', 0.0254, [meterBaseUnit]);
 
 final squareMeter = meter * meter;
 
-final gram = Unit.nonDerived(MassBaseUnit.gram);
+final gram = _mkStandard(gramBaseUnit);
 
-final pound = Unit.nonDerived(MassBaseUnit.pound);
+final pound = _mkNonStandard('lb', 453.59237, [gramBaseUnit]);
 
-final second = Unit.nonDerived(TimeBaseUnit.second);
+final second = _mkStandard(secondBaseUnit);
 
-final hour = Unit.nonDerived(TimeBaseUnit.hour);
+const _secondsPerHour = 60.0 * 60;
 
-final day = Unit.nonDerived(TimeBaseUnit.day);
+final hour = _mkNonStandard('hr', _secondsPerHour, [secondBaseUnit]);
 
-final week = Unit.nonDerived(TimeBaseUnit.week);
+const _secondsPerDay = _secondsPerHour * 24;
 
-final month = Unit.nonDerived(TimeBaseUnit.month);
+final day = _mkNonStandard('d', _secondsPerDay, [secondBaseUnit]);
 
-final year = Unit.nonDerived(TimeBaseUnit.year);
+const _secondsPerWeek = _secondsPerDay * 7;
 
-class _SameQuantityTupleEquality
-    implements Equality<Tuple2<BaseUnit, UnitPrefix?>> {
-  const _SameQuantityTupleEquality();
+final week = _mkNonStandard('wk', _secondsPerWeek, [secondBaseUnit]);
+
+const _secondsPerMonth = _secondsPerDay * 30.436875;
+
+final month = _mkNonStandard('mo', _secondsPerMonth, [secondBaseUnit]);
+
+const _secondsPerYear = _secondsPerMonth * 12;
+
+final year = _mkNonStandard('yr', _secondsPerYear, [secondBaseUnit]);
+
+final _baseUnitsMap = {
+  for (final unit in [
+    meter,
+    inch,
+    gram,
+    pound,
+    second,
+    hour,
+    day,
+    week,
+    month,
+    year,
+  ])
+    unit.toString(): unit.baseUnit,
+};
+
+class _SameQuantityEquality implements Equality<BaseUnit> {
+  const _SameQuantityEquality();
 
   @override
-  bool equals(Tuple2<BaseUnit, UnitPrefix?> unit1,
-          Tuple2<BaseUnit, UnitPrefix?> unit2) =>
-      unit1.item1.hasSameQuantity(unit2.item1);
+  bool equals(BaseUnit unit1, BaseUnit unit2) => unit1.hasSameQuantity(unit2);
 
   @override
-  int hash(Tuple2<BaseUnit, UnitPrefix?> unit) => unit.item1.id;
+  int hash(BaseUnit unit) => unit.hashCode;
 
   @override
-  bool isValidKey(Object? obj) => obj is Tuple2<BaseUnit, UnitPrefix?>;
+  bool isValidKey(Object? obj) => obj is BaseUnit;
+}
+
+@internal
+class NonDerivedUnit extends Unit {
+  NonDerivedUnit(this.baseUnit) : super._([baseUnit], const []);
+
+  final PrefixedBaseUnit baseUnit;
+
+  NonDerivedUnit withPrefix(UnitPrefix newPrefix) =>
+      NonDerivedUnit(baseUnit.withPrefix(newPrefix));
 }
 
 class Unit {
-  const Unit._(this.unitsUp, this.unitsDown);
+  const Unit._(this._unitsUp, this._unitsDown);
 
-  @internal
-  Unit.nonDerived(BaseUnit baseUnit, [UnitPrefix? prefix])
-      : unitsUp = [Tuple2(baseUnit, prefix)],
-        unitsDown = const [];
-
-  @internal
-  factory Unit.derived(List<Tuple2<BaseUnit, UnitPrefix?>> unitsUp,
-      List<Tuple2<BaseUnit, UnitPrefix?>> unitsDown) {
+  factory Unit._derived(
+      List<PrefixedBaseUnit> unitsUp, List<PrefixedBaseUnit> unitsDown) {
     final newUnitsUp = unitsUp.toList();
     final newUnitsDown = unitsDown.toList();
 
-    for (final tuple in unitsUp) {
-      if (newUnitsDown.remove(tuple)) {
-        newUnitsUp.remove(tuple);
+    for (final unit in unitsUp) {
+      if (newUnitsDown.remove(unit)) {
+        newUnitsUp.remove(unit);
       }
     }
 
@@ -74,8 +111,8 @@ class Unit {
   /// Parses [string] to a unit and adds it to [list] if necessary.
   ///
   /// Returns `false` if parsing failed.
-  static bool _parseAndAddTupleToList(
-      List<Tuple2<BaseUnit, UnitPrefix?>> list, String string) {
+  static bool _parseAndAddPrefixedBaseUnitToList(
+      List<PrefixedBaseUnit> list, String string) {
     if (string == '1') {
       return true;
     }
@@ -84,10 +121,8 @@ class Unit {
       return false;
     }
 
-    final initialBaseUnit = BaseUnit.tryParse(string);
-
-    if (initialBaseUnit != null) {
-      list.add(Tuple2(initialBaseUnit, null));
+    if (_baseUnitsMap.containsKey(string)) {
+      list.add(_baseUnitsMap[string]!);
       return true;
     }
 
@@ -107,9 +142,8 @@ class Unit {
       prefix = null;
     }
 
-    final baseUnit = BaseUnit.tryParse(baseUnitString);
-    if (baseUnit != null) {
-      list.add(Tuple2(baseUnit, prefix));
+    if (_baseUnitsMap.containsKey(baseUnitString)) {
+      list.add(_baseUnitsMap[baseUnitString]!.withPrefix(prefix));
       return true;
     }
 
@@ -132,17 +166,17 @@ class Unit {
   @factory
   // ignore: prefer_constructors_over_static_methods
   static Unit? tryParse(String string) {
-    final unitsUp = <Tuple2<BaseUnit, UnitPrefix?>>[];
-    final unitsDown = <Tuple2<BaseUnit, UnitPrefix?>>[];
+    final unitsUp = <PrefixedBaseUnit>[];
+    final unitsDown = <PrefixedBaseUnit>[];
 
     final list = string.split(RegExp('(?=[*/])'));
 
-    if (!_parseAndAddTupleToList(unitsUp, list[0])) {
+    if (!_parseAndAddPrefixedBaseUnitToList(unitsUp, list[0])) {
       return null;
     }
 
     for (final string in list.skip(1)) {
-      final List<Tuple2<BaseUnit, UnitPrefix?>> list;
+      final List<PrefixedBaseUnit> list;
 
       switch (string[0]) {
         case '/':
@@ -157,57 +191,28 @@ class Unit {
           return null;
       }
 
-      if (!_parseAndAddTupleToList(list, string.substring(1))) {
+      if (!_parseAndAddPrefixedBaseUnitToList(list, string.substring(1))) {
         return null;
       }
     }
 
-    return Unit.derived(unitsUp, unitsDown);
+    return Unit._derived(unitsUp, unitsDown);
   }
 
-  @internal
-  Tuple2<Unit, double> simplify() {
-    final newUnitsUp = unitsUp.toList();
-    final newUnitsDown = unitsDown.toList();
-    var valueMultiple = 1.0;
+  final List<PrefixedBaseUnit> _unitsUp;
 
-    for (final upTuple in unitsUp) {
-      if (newUnitsDown.remove(upTuple)) {
-        newUnitsUp.remove(upTuple);
-        continue;
-      }
+  final List<PrefixedBaseUnit> _unitsDown;
 
-      final downTuple = newUnitsDown.firstWhereOrNull(
-        (elem) => upTuple.item1.hasSameQuantity(elem.item1),
+  Unit get reciprocal => Unit._(_unitsDown, _unitsUp);
+
+  Unit operator *(Unit that) => Unit._derived(
+        [..._unitsUp, ...that._unitsUp],
+        [..._unitsDown, ...that._unitsDown],
       );
 
-      if (downTuple != null) {
-        newUnitsUp.remove(upTuple);
-        newUnitsDown.remove(downTuple);
-        valueMultiple *= (upTuple.item1.value * (upTuple.item2?.value ?? 1)) /
-            (downTuple.item1.value * (downTuple.item2?.value ?? 1));
-      }
-    }
-
-    return Tuple2(Unit._(newUnitsUp, newUnitsDown), valueMultiple);
-  }
-
-  @internal
-  final List<Tuple2<BaseUnit, UnitPrefix?>> unitsUp;
-
-  @internal
-  final List<Tuple2<BaseUnit, UnitPrefix?>> unitsDown;
-
-  Unit get reciprocal => Unit._(unitsDown, unitsUp);
-
-  Unit operator *(Unit that) => Unit.derived(
-        [...unitsUp, ...that.unitsUp],
-        [...unitsDown, ...that.unitsDown],
-      );
-
-  Unit operator /(Unit that) => Unit.derived(
-        [...unitsUp, ...that.unitsDown],
-        [...unitsDown, ...that.unitsUp],
+  Unit operator /(Unit that) => Unit._derived(
+        [..._unitsUp, ...that._unitsDown],
+        [..._unitsDown, ...that._unitsUp],
       );
 
   String _intToSuperscript(int i) {
@@ -237,20 +242,19 @@ class Unit {
     return list.join();
   }
 
-  Iterable<String> _tupleListToStrings(
-      List<Tuple2<BaseUnit, UnitPrefix?>> list) sync* {
-    final map = <Tuple2<BaseUnit, UnitPrefix?>, int>{};
+  Iterable<String> _unitsToStrings(List<PrefixedBaseUnit> list) sync* {
+    final map = <PrefixedBaseUnit, int>{};
 
-    for (final tuple in list) {
-      if (map.containsKey(tuple)) {
-        map[tuple] = map[tuple]! + 1;
+    for (final prefixedUnit in list) {
+      if (map.containsKey(prefixedUnit)) {
+        map[prefixedUnit] = map[prefixedUnit]! + 1;
       } else {
-        map[tuple] = 1;
+        map[prefixedUnit] = 1;
       }
     }
 
     for (final entry in map.entries) {
-      final unitString = _unitTupleToString(entry.key);
+      final unitString = entry.key.toString();
 
       if (entry.value == 1) {
         yield unitString;
@@ -261,12 +265,6 @@ class Unit {
     }
   }
 
-  String _unitTupleToString(Tuple2<BaseUnit, UnitPrefix?> tuple) {
-    if (tuple.item2 == null) return tuple.item1.toString();
-
-    return '${tuple.item2}${tuple.item1}';
-  }
-
   @override
   String toString() {
     if (this == unity) {
@@ -275,15 +273,15 @@ class Unit {
 
     final buffer = StringBuffer();
 
-    if (unitsUp.isEmpty) {
+    if (_unitsUp.isEmpty) {
       buffer.write('1');
     } else {
-      buffer.writeAll(_tupleListToStrings(unitsUp), ' · ');
+      buffer.writeAll(_unitsToStrings(_unitsUp), ' · ');
     }
 
-    if (unitsDown.isNotEmpty) {
+    if (_unitsDown.isNotEmpty) {
       buffer.write(' / ');
-      final stringList = _tupleListToStrings(unitsDown).toList(growable: false);
+      final stringList = _unitsToStrings(_unitsDown).toList(growable: false);
 
       if (stringList.length == 1) {
         buffer.write(stringList[0]);
@@ -297,30 +295,100 @@ class Unit {
     return buffer.toString();
   }
 
-  bool canBeConvertedTo(Unit other) {
-    const equality = UnorderedIterableEquality(_SameQuantityTupleEquality());
-
-    return equality.equals(unitsUp, other.unitsUp) &&
-        equality.equals(unitsDown, other.unitsDown);
-  }
+  bool canBeConvertedTo(Unit other) =>
+      toStandardUnits().canBeConvertedTo(other.toStandardUnits());
 
   @override
   int get hashCode {
-    const equality = UnorderedIterableEquality<Tuple2<BaseUnit, UnitPrefix?>>();
+    const equality = UnorderedIterableEquality<PrefixedBaseUnit>();
 
-    return runtimeType.hashCode ^
-        equality.hash(unitsUp) ^
-        equality.hash(unitsDown);
+    return equality.hash(_unitsUp) ^ equality.hash(_unitsDown);
   }
 
   @override
   bool operator ==(dynamic that) {
-    const equality = UnorderedIterableEquality<Tuple2<BaseUnit, UnitPrefix?>>();
+    const equality = UnorderedIterableEquality<PrefixedBaseUnit>();
 
     return identical(this, that) ||
         (that is Unit &&
-            that.runtimeType == runtimeType &&
-            equality.equals(that.unitsUp, unitsUp) &&
-            equality.equals(that.unitsDown, unitsDown));
+            equality.equals(that._unitsUp, _unitsUp) &&
+            equality.equals(that._unitsDown, _unitsDown));
+  }
+}
+
+@internal
+extension UnitUtils on Unit {
+  Tuple2<Unit, double> simplify() {
+    final newUnitsUp = _unitsUp.toList();
+    final newUnitsDown = _unitsDown.toList();
+    var valueMultiple = 1.0;
+
+    for (final unitUp in _unitsUp) {
+      if (newUnitsDown.remove(unitUp)) {
+        newUnitsUp.remove(unitUp);
+        continue;
+      }
+
+      final unitDown = newUnitsDown.firstWhereOrNull(
+        (elem) => unitUp.baseUnit.hasSameQuantity(elem.baseUnit),
+      );
+
+      if (unitDown != null) {
+        newUnitsUp.remove(unitUp);
+        newUnitsDown.remove(unitDown);
+        valueMultiple *=
+            (unitUp.baseUnit.factor * (unitUp.prefix?.value ?? 1)) /
+                (unitDown.baseUnit.factor * (unitDown.prefix?.value ?? 1));
+      }
+    }
+
+    return Tuple2(Unit._(newUnitsUp, newUnitsDown), valueMultiple);
+  }
+
+  Tuple3<List<BaseStandardUnit>, List<BaseStandardUnit>, double>
+      toStandardUnits() {
+    final standardUnitsUp = <BaseStandardUnit>[];
+    final standardUnitsDown = <BaseStandardUnit>[];
+    var factor = 1.0;
+
+    for (final unit in _unitsUp) {
+      if (unit.prefix != null) {
+        factor *= unit.prefix!.value;
+      }
+
+      factor *= unit.baseUnit.factor;
+
+      standardUnitsUp.addAll(unit.baseUnit.unitsUp);
+      standardUnitsDown.addAll(unit.baseUnit.unitsDown);
+    }
+
+    for (final unit in _unitsDown) {
+      if (unit.prefix != null) {
+        factor /= unit.prefix!.value;
+      }
+
+      factor /= unit.baseUnit.factor;
+
+      standardUnitsUp.addAll(unit.baseUnit.unitsDown);
+      standardUnitsDown.addAll(unit.baseUnit.unitsUp);
+    }
+
+    return Tuple3(standardUnitsUp, standardUnitsDown, factor);
+  }
+
+  List<PrefixedBaseUnit> get unitsUp => _unitsUp;
+
+  List<PrefixedBaseUnit> get unitsDown => _unitsDown;
+}
+
+@internal
+extension CompareStandardUnits
+    on Tuple3<List<BaseStandardUnit>, List<BaseStandardUnit>, double> {
+  bool canBeConvertedTo(
+      Tuple3<List<BaseStandardUnit>, List<BaseStandardUnit>, double> other) {
+    const equality = UnorderedIterableEquality(_SameQuantityEquality());
+
+    return equality.equals(item1, other.item1) &&
+        equality.equals(item2, other.item2);
   }
 }

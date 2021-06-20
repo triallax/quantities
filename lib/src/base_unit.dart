@@ -1,40 +1,60 @@
+import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
 
-import 'length_base_unit.dart';
-import 'mass_base_unit.dart';
-import 'time_base_unit.dart';
+@internal
+const meterBaseUnit = BaseStandardUnit._('m');
+
+@internal
+const secondBaseUnit = BaseStandardUnit._('s');
+
+@internal
+const gramBaseUnit = BaseStandardUnit._('g');
 
 @internal
 @immutable
-abstract class BaseUnit {
-  const BaseUnit(this.value, this.id, this.symbol);
-
-  final double value;
+@sealed
+class BaseUnit {
+  const BaseUnit(this.symbol, this.factor, this.unitsUp, this.unitsDown);
 
   final String symbol;
 
-  final int id;
+  final List<BaseStandardUnit> unitsUp;
 
-  @factory
-  static BaseUnit? tryParse(String string) {
-    for (final value in _values) {
-      if (string == value.symbol) {
-        return value;
-      }
-    }
+  final List<BaseStandardUnit> unitsDown;
 
-    return null;
-  }
-
-  static const _values = [
-    ...LengthBaseUnit.values,
-    ...MassBaseUnit.values,
-    ...TimeBaseUnit.values
-  ];
-
-  @nonVirtual
-  bool hasSameQuantity(BaseUnit that) => id == that.id;
+  final double factor;
 
   @override
   String toString() => symbol;
+}
+
+@internal
+class BaseStandardUnit implements BaseUnit {
+  const BaseStandardUnit._(this.symbol);
+
+  @override
+  final String symbol;
+
+  @override
+  List<BaseStandardUnit> get unitsUp => [this];
+
+  @override
+  List<BaseStandardUnit> get unitsDown => const [];
+
+  @override
+  double get factor => 1;
+
+  @override
+  String toString() => symbol;
+}
+
+@internal
+extension BaseUnitUtils on BaseUnit {
+  bool hasSameQuantity(BaseUnit other) {
+    const equality = UnorderedIterableEquality<BaseStandardUnit>();
+
+    return identical(this, other) ||
+        equality.equals(unitsUp, other.unitsUp) &&
+            equality.equals(unitsDown, other.unitsDown);
+  }
 }

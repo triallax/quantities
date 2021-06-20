@@ -1,21 +1,20 @@
 import 'package:quantities/quantities.dart';
-import 'package:quantities/src/base_unit.dart' show BaseUnit;
+import 'package:quantities/src/prefixed_base_unit.dart';
+import 'package:quantities/src/unit.dart';
 import 'package:test/test.dart';
-import 'package:tuple/tuple.dart';
 
 void checkNonDerivedUnit(
-  Unit unit, {
-  UnitPrefix? prefix,
-  required BaseUnit baseUnit,
-}) {
-  expect(unit.unitsUp, [Tuple2(baseUnit, prefix)]);
+  Unit unit,
+  PrefixedBaseUnit baseUnit,
+) {
+  expect(unit.unitsUp, [baseUnit]);
   expect(unit.unitsDown, isEmpty);
 }
 
 void checkDerivedUnit(
   Unit unit, {
-  required List<Tuple2<BaseUnit, UnitPrefix?>> unitsUp,
-  required List<Tuple2<BaseUnit, UnitPrefix?>> unitsDown,
+  required List<PrefixedBaseUnit> unitsUp,
+  required List<PrefixedBaseUnit> unitsDown,
 }) {
   expect(unit.unitsUp, unorderedEquals(unitsUp));
   expect(unit.unitsDown, unorderedEquals(unitsDown));

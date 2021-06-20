@@ -1,9 +1,6 @@
 import 'package:quantities/quantities.dart';
-import 'package:quantities/src/length_base_unit.dart';
-import 'package:quantities/src/mass_base_unit.dart';
-import 'package:quantities/src/time_base_unit.dart';
+import 'package:quantities/src/unit.dart';
 import 'package:test/test.dart';
-import 'package:tuple/tuple.dart';
 
 import 'utils.dart';
 
@@ -12,16 +9,14 @@ void main() {
     test('gram returns correct unit', () {
       checkNonDerivedUnit(
         kilo.gram,
-        prefix: kilo,
-        baseUnit: MassBaseUnit.gram,
+        gram.baseUnit.withPrefix(kilo),
       );
     });
 
     test('meter returns correct unit', () {
       checkNonDerivedUnit(
         centi.meter,
-        prefix: centi,
-        baseUnit: LengthBaseUnit.meter,
+        meter.baseUnit.withPrefix(centi),
       );
     });
   });
@@ -44,33 +39,15 @@ void main() {
       expect(Unit.tryParse('*/1'), null);
 
       for (final unitPrefix in UnitPrefix.values) {
-        expect(Unit.tryParse('${unitPrefix}g'),
-            Unit.nonDerived(MassBaseUnit.gram, unitPrefix));
+        expect(
+          Unit.tryParse('${unitPrefix}g'),
+          gram.withPrefix(unitPrefix),
+        );
         expect(
           Unit.tryParse('${unitPrefix}m/hr'),
-          Unit.nonDerived(LengthBaseUnit.meter, unitPrefix) / hour,
+          meter.withPrefix(unitPrefix) / hour,
         );
       }
-    });
-
-    test('constructs correct unit', () {
-      checkDerivedUnit(
-        Unit.derived(
-          const [Tuple2(LengthBaseUnit.meter, null)],
-          const [Tuple2(TimeBaseUnit.second, null)],
-        ),
-        unitsUp: const [Tuple2(LengthBaseUnit.meter, null)],
-        unitsDown: const [Tuple2(TimeBaseUnit.second, null)],
-      );
-
-      checkNonDerivedUnit(
-        Unit.nonDerived(MassBaseUnit.gram, kilo),
-        prefix: kilo,
-        baseUnit: MassBaseUnit.gram,
-      );
-
-      checkNonDerivedUnit(Unit.nonDerived(TimeBaseUnit.second),
-          baseUnit: TimeBaseUnit.second);
     });
 
     test('toString returns correct string', () {
@@ -109,10 +86,7 @@ void main() {
     test('multiplies two non derived units correctly', () {
       checkDerivedUnit(
         kilo.gram * meter,
-        unitsUp: const [
-          Tuple2(MassBaseUnit.gram, kilo),
-          Tuple2(LengthBaseUnit.meter, null),
-        ],
+        unitsUp: [gram.baseUnit.withPrefix(kilo), meter.baseUnit],
         unitsDown: const [],
       );
     });
@@ -120,23 +94,23 @@ void main() {
     test('multiplies a derived unit and non derived unit correctly', () {
       checkDerivedUnit(
         (kilo.meter / day) * second,
-        unitsUp: const [
-          Tuple2(LengthBaseUnit.meter, kilo),
-          Tuple2(TimeBaseUnit.second, null),
+        unitsUp: [
+          meter.baseUnit.withPrefix(kilo),
+          second.baseUnit,
         ],
-        unitsDown: const [Tuple2(TimeBaseUnit.day, null)],
+        unitsDown: [day.baseUnit],
       );
     });
 
     test('multiplies a non derived unit and derived unit correctly', () {
       checkDerivedUnit(
         kilo.meter * (kilo.gram / meter),
-        unitsUp: const [
-          Tuple2(MassBaseUnit.gram, kilo),
-          Tuple2(LengthBaseUnit.meter, kilo),
+        unitsUp: [
+          meter.baseUnit.withPrefix(kilo),
+          gram.baseUnit.withPrefix(kilo),
         ],
-        unitsDown: const [
-          Tuple2(LengthBaseUnit.meter, null),
+        unitsDown: [
+          meter.baseUnit,
         ],
       );
     });
@@ -144,30 +118,30 @@ void main() {
     test('multiplies derived units correctly', () {
       checkDerivedUnit(
         (kilo.meter / second) * (kilo.gram * meter),
-        unitsUp: const [
-          Tuple2(LengthBaseUnit.meter, kilo),
-          Tuple2(MassBaseUnit.gram, kilo),
-          Tuple2(LengthBaseUnit.meter, null),
+        unitsUp: [
+          meter.baseUnit.withPrefix(kilo),
+          gram.baseUnit.withPrefix(kilo),
+          meter.baseUnit,
         ],
-        unitsDown: const [Tuple2(TimeBaseUnit.second, null)],
+        unitsDown: [second.baseUnit],
       );
     });
 
     test('divides two non derived units correctly', () {
       checkDerivedUnit(
         meter / second,
-        unitsUp: const [Tuple2(LengthBaseUnit.meter, null)],
-        unitsDown: const [Tuple2(TimeBaseUnit.second, null)],
+        unitsUp: [meter.baseUnit],
+        unitsDown: [second.baseUnit],
       );
     });
 
     test('divides a derived unit and a non derived unit correctly', () {
       checkDerivedUnit(
         (kilo.meter / second) / meter,
-        unitsUp: const [Tuple2(LengthBaseUnit.meter, kilo)],
-        unitsDown: const [
-          Tuple2(TimeBaseUnit.second, null),
-          Tuple2(LengthBaseUnit.meter, null),
+        unitsUp: [meter.baseUnit.withPrefix(kilo)],
+        unitsDown: [
+          second.baseUnit,
+          meter.baseUnit,
         ],
       );
     });
@@ -175,10 +149,10 @@ void main() {
     test('divides a non derived unit and derived unit correctly', () {
       checkDerivedUnit(
         kilo.gram / (meter * meter),
-        unitsUp: const [Tuple2(MassBaseUnit.gram, kilo)],
-        unitsDown: const [
-          Tuple2(LengthBaseUnit.meter, null),
-          Tuple2(LengthBaseUnit.meter, null),
+        unitsUp: [gram.baseUnit.withPrefix(kilo)],
+        unitsDown: [
+          meter.baseUnit,
+          meter.baseUnit,
         ],
       );
     });
@@ -186,12 +160,12 @@ void main() {
     test('divides derived units correctly', () {
       checkDerivedUnit(
         (kilo.gram * meter) / (second / gram),
-        unitsUp: const [
-          Tuple2(MassBaseUnit.gram, kilo),
-          Tuple2(LengthBaseUnit.meter, null),
-          Tuple2(MassBaseUnit.gram, null),
+        unitsUp: [
+          gram.baseUnit.withPrefix(kilo),
+          meter.baseUnit,
+          gram.baseUnit,
         ],
-        unitsDown: const [Tuple2(TimeBaseUnit.second, null)],
+        unitsDown: [second.baseUnit],
       );
     });
 
@@ -199,15 +173,13 @@ void main() {
       checkDerivedUnit(
         gram.reciprocal,
         unitsUp: const [],
-        unitsDown: const [Tuple2(MassBaseUnit.gram, null)],
+        unitsDown: [gram.baseUnit],
       );
 
       checkDerivedUnit(
         (kilo.meter / day).reciprocal,
-        unitsUp: const [Tuple2(TimeBaseUnit.day, null)],
-        unitsDown: const [
-          Tuple2(LengthBaseUnit.meter, kilo),
-        ],
+        unitsUp: [day.baseUnit],
+        unitsDown: [meter.baseUnit.withPrefix(kilo)],
       );
     });
 
@@ -215,8 +187,7 @@ void main() {
         () {
       checkNonDerivedUnit(
         kilo.meter * second / second,
-        baseUnit: LengthBaseUnit.meter,
-        prefix: kilo,
+        meter.baseUnit.withPrefix(kilo),
       );
     });
 
@@ -224,13 +195,13 @@ void main() {
       final tuple = (meter / second * day).simplify();
       final unit = tuple.item1;
       final multiple = tuple.item2;
-      checkNonDerivedUnit(unit, baseUnit: LengthBaseUnit.meter);
+      checkNonDerivedUnit(unit, meter.baseUnit);
       expect(multiple, 86400);
     });
 
     test('== works correctly', () {
       expect(Unit.unity, Unit.unity);
-      expect(Unit.unity, Unit.derived(const [], const []));
+      expect(Unit.unity, second / second);
       expect(Unit.unity, isNot(second.reciprocal));
 
       expect(meter / second, meter / second);
@@ -242,21 +213,9 @@ void main() {
     });
 
     test('hashCode works correctly', () {
-      expect(Unit.unity.hashCode, Unit.derived(const [], const []).hashCode);
+      expect(Unit.unity.hashCode, (second / second).hashCode);
       expect((meter / second).hashCode, (meter / second).hashCode);
       expect(kilo.gram.hashCode, kilo.gram.hashCode);
     });
-  });
-
-  test('global unit consts have correct values', () {
-    expect(meter, Unit.nonDerived(LengthBaseUnit.meter));
-    expect(inch, Unit.nonDerived(LengthBaseUnit.inch));
-    expect(gram, Unit.nonDerived(MassBaseUnit.gram));
-    expect(pound, Unit.nonDerived(MassBaseUnit.pound));
-    expect(second, Unit.nonDerived(TimeBaseUnit.second));
-    expect(hour, Unit.nonDerived(TimeBaseUnit.hour));
-    expect(day, Unit.nonDerived(TimeBaseUnit.day));
-    expect(month, Unit.nonDerived(TimeBaseUnit.month));
-    expect(year, Unit.nonDerived(TimeBaseUnit.year));
   });
 }

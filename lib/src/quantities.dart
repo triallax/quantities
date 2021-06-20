@@ -1,9 +1,6 @@
 import 'package:meta/meta.dart';
-import 'package:tuple/tuple.dart' show Tuple2;
 
-import 'base_unit.dart';
 import 'unit.dart';
-import 'unit_prefix.dart';
 
 @immutable
 class Quantity implements Comparable<Quantity> {
@@ -50,60 +47,21 @@ class Quantity implements Comparable<Quantity> {
   }
 
   double to(Unit newUnit) {
-    if (!unit.canBeConvertedTo(newUnit)) {
+    if (unit == newUnit) return value;
+
+    final oldStandardUnits = unit.toStandardUnits();
+    final newStandardUnits = newUnit.toStandardUnits();
+
+    if (!oldStandardUnits.canBeConvertedTo(newStandardUnits)) {
       throw ArgumentError("Can't convert $this to $newUnit");
     }
 
     // Read `isFinite`'s docs.
-    if (unit == newUnit || !value.isFinite) {
+    if (!value.isFinite) {
       return value;
     }
 
-    int compareTuples(Tuple2<BaseUnit, UnitPrefix?> tuple1,
-            Tuple2<BaseUnit, UnitPrefix?> tuple2) =>
-        tuple1.item1.id.compareTo(tuple2.item1.id);
-
-    final oldSortedUnitsUp = unit.unitsUp.toList()..sort(compareTuples);
-    final oldSortedUnitsDown = unit.unitsDown.toList()..sort(compareTuples);
-    final newSortedUnitsUp = newUnit.unitsUp.toList()..sort(compareTuples);
-    final newSortedUnitsDown = newUnit.unitsDown.toList()..sort(compareTuples);
-
-    var thisMultiple = 1.0;
-    var thatMultiple = 1.0;
-
-    oldSortedUnitsUp.asMap().forEach((index, tuple) {
-      if (tuple.item2 != null) {
-        thisMultiple *= tuple.item2!.value;
-      }
-
-      final newTuple = newSortedUnitsUp[index];
-      if (newTuple.item2 != null) {
-        thatMultiple *= newTuple.item2!.value;
-      }
-
-      if (newTuple.item1 != tuple.item1) {
-        thisMultiple *= tuple.item1.value;
-        thatMultiple *= newTuple.item1.value;
-      }
-    });
-
-    oldSortedUnitsDown.asMap().forEach((index, tuple) {
-      if (tuple.item2 != null) {
-        thisMultiple /= tuple.item2!.value;
-      }
-
-      final newTuple = newSortedUnitsDown[index];
-      if (newTuple.item2 != null) {
-        thatMultiple /= newTuple.item2!.value;
-      }
-
-      if (newTuple.item1 != tuple.item1) {
-        thisMultiple /= tuple.item1.value;
-        thatMultiple /= newTuple.item1.value;
-      }
-    });
-
-    return value * thisMultiple / thatMultiple;
+    return value * oldStandardUnits.item3 / newStandardUnits.item3;
   }
 
   bool operator <(Quantity that) => value < that.to(unit);

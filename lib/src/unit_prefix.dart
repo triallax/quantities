@@ -1,8 +1,7 @@
 import 'package:meta/meta.dart';
 
-import 'length_base_unit.dart';
-import 'mass_base_unit.dart';
-import 'unit.dart';
+import 'unit.dart' show Unit;
+import 'unit.dart' as u;
 
 const kilo = UnitPrefix._(1000, 'k');
 
@@ -22,9 +21,9 @@ class UnitPrefix {
   @internal
   final String symbol;
 
-  Unit get meter => Unit.nonDerived(LengthBaseUnit.meter, this);
+  Unit get meter => u.meter.withPrefix(this);
 
-  Unit get gram => Unit.nonDerived(MassBaseUnit.gram, this);
+  Unit get gram => u.gram.withPrefix(this);
 
   static const values = [kilo, deci, centi, milli, micro];
 
