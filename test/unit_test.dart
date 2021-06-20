@@ -8,6 +8,7 @@ void main() {
   group('UnitPrefix', () {
     test('gram returns correct unit', () {
       checkNonDerivedUnit(
+        // ignore: deprecated_member_use_from_same_package
         kilo.gram,
         gram.baseUnit.withPrefix(kilo),
       );
@@ -15,6 +16,7 @@ void main() {
 
     test('meter returns correct unit', () {
       checkNonDerivedUnit(
+        // ignore: deprecated_member_use_from_same_package
         centi.meter,
         meter.baseUnit.withPrefix(centi),
       );
