@@ -23,12 +23,19 @@ final inch = _mkNonStandard('in', 0.0254, [meterBaseUnit]);
 /// Unit of area.
 final squareMeter = meter * meter;
 
+/// Unit of volume, `1 L = 0.001 m^3`.
+final liter =
+    _mkNonStandard('L', 0.001, [meterBaseUnit, meterBaseUnit, meterBaseUnit]);
+
 /// Base unit of mass (note that the kilogram is the standard unit of mass in
 /// SI, *NOT* the gram).
 final gram = _mkStandard(gramBaseUnit);
 
 /// Unit of mass; `1 lb = 453.59237 g`.
 final pound = _mkNonStandard('lb', 453.59237, [gramBaseUnit]);
+
+/// Base unit for amount of substance.
+final mole = _mkStandard(moleBaseUnit);
 
 /// Base unit of time.
 final second = _mkStandard(secondBaseUnit);

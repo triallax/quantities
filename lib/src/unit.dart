@@ -11,6 +11,8 @@ final _baseUnitsMap = {
   for (final unit in [
     meter,
     inch,
+    liter,
+    mole,
     gram,
     pound,
     second,

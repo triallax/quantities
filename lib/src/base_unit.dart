@@ -11,6 +11,9 @@ const secondBaseUnit = BaseStandardUnit._('s');
 const gramBaseUnit = BaseStandardUnit._('g');
 
 @internal
+const moleBaseUnit = BaseStandardUnit._('mol');
+
+@internal
 @immutable
 @sealed
 class BaseUnit {

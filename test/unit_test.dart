@@ -34,7 +34,9 @@ void main() {
       expect(Unit.tryParse('in'), inch);
       expect(Unit.tryParse('lb'), pound);
       expect(Unit.tryParse('kg/m/m'), kilo(gram) / (meter * meter));
+      expect(Unit.tryParse('kg/dL'), kilo(gram) / deci(liter));
       expect(Unit.tryParse('vg'), null);
+      expect(Unit.tryParse('mmol/dL'), milli(mole) / deci(liter));
       expect(Unit.tryParse('foo'), null);
       expect(Unit.tryParse('*'), null);
       expect(Unit.tryParse('kg*'), null);
@@ -134,6 +136,12 @@ void main() {
         meter / second,
         unitsUp: [meter.baseUnit],
         unitsDown: [second.baseUnit],
+      );
+
+      checkDerivedUnit(
+        kilo(gram) / deci(liter),
+        unitsUp: [gram.baseUnit.withPrefix(kilo)],
+        unitsDown: [liter.baseUnit.withPrefix(deci)],
       );
     });
 

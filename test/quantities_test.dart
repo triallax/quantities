@@ -100,6 +100,11 @@ void main() {
           (4(kilo(gram)) * 55(meter) / (44(second) * 3(second)))
               .to(gram * kilo(meter) / (day * day)),
           closeTo(12441600000, tolerance));
+      expect(5(liter).to(meter * meter * meter), 0.005);
+      expect(
+        (2.4(milli(mole)) / 5(deci(liter))).to(centi(mole) / milli(liter)),
+        closeTo(0.00048, 0.0000000000000000001),
+      );
     });
   });
 

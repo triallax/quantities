@@ -6,6 +6,8 @@ export 'src/units.dart'
         meter,
         inch,
         squareMeter,
+        liter,
+        mole,
         gram,
         pound,
         second,
