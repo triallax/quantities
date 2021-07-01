@@ -1,3 +1,8 @@
+## 0.1.1
+
+- Add `purescript-quantities` license to LICENSE
+- Update copyright range in LICENSE
+
 ## 0.1.0
 
 - [BREAKING] `Quantity`'s constructor now takes `double` instead of `num`
